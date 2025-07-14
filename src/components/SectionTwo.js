@@ -1,7 +1,14 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { Box, Typography, Button, Grid } from "@mui/material";
+import {
+  Box,
+  Typography,
+  Button,
+  Grid,
+  useTheme,
+  useMediaQuery,
+} from "@mui/material";
 import styled from "@emotion/styled";
 import { motion } from "framer-motion";
 
@@ -17,14 +24,20 @@ const StickyContainer = styled(Box)`
   padding: 0 32px;
   overflow: hidden;
 
+  @media (max-width: 900px) {
+    padding: 0 24px;
+  }
+
   @media (max-width: 600px) {
     padding: 0 16px;
+    grid-template-rows: auto auto 1fr auto;
   }
 `;
 
 const VideoContainer = styled(Box)`
   position: relative;
   width: 100%;
+  height: 100%;
   text-align: center;
 `;
 
@@ -34,6 +47,10 @@ const PartButton = styled(Button)`
   text-transform: none;
   color: white;
   transition: all 0.3s ease;
+
+  @media (max-width: 600px) {
+    min-width: 50px;
+  }
 `;
 
 const ProgressBar = styled(Box)`
@@ -46,6 +63,10 @@ const ProgressBar = styled(Box)`
 `;
 
 const SectionTwo = () => {
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+  const isTablet = useMediaQuery(theme.breakpoints.between("sm", "md"));
+
   const [vehicle, setVehicle] = useState("passenger");
   const [partIdx, setPartIdx] = useState(0);
   const [scrollPct, setScrollPct] = useState(0);
@@ -62,31 +83,26 @@ const SectionTwo = () => {
     {
       title: "Complete body",
       video: "/assets/videos/passenger-alpha-trim.mp4",
-      poster: "/assets/carpar1.png",
       icon: "/assets/carpar1.png",
     },
     {
       title: "Front",
       video: "/assets/videos/front.mp4",
-      poster: "/assets/carpart2.png",
       icon: "/assets/carpart2.png",
     },
     {
       title: "Cabin",
       video: "/assets/videos/Cabin.mp4",
-      poster: "/assets/carpart3.png",
       icon: "/assets/carpart3.png",
     },
     {
       title: "Trunk",
       video: "/assets/videos/Trunk.mp4",
-      poster: "/assets/carpart4.png",
       icon: "/assets/carpart4.png",
     },
     {
       title: "Exterior",
       video: "/assets/videos/Exterior.mp4",
-      poster: "/assets/carpart5.png",
       icon: "/assets/carpart5.png",
     },
   ];
@@ -95,19 +111,16 @@ const SectionTwo = () => {
     {
       title: "Complete body",
       video: "/assets/videos/commercial-alpha.mp4",
-      poster: "/assets/engine.svg",
       icon: "/assets/engine.svg",
     },
     {
       title: "Cabin",
-      video: "/assets/videos/commercial-alpha.mp4",
-      poster: "/assets/engine2.svg",
+      video: "/assets/videos/Commercial-Engine.d8957f7c027ca396858e.mp4",
       icon: "/assets/engine2.svg",
     },
     {
       title: "Trunk",
       video: "/assets/videos/commercial-alpha.mp4",
-      poster: "/assets/engine3.svg",
       icon: "/assets/engine3.svg",
     },
   ];
@@ -204,15 +217,19 @@ const SectionTwo = () => {
           <Typography
             variant="h2"
             sx={{
-              pt: 4,
+              pt: { xs: 2, sm: 4 },
+              pb: { xs: 2, sm: 0 },
               textAlign: "center",
               fontFamily: "Inter",
               fontWeight: 400,
               fontStyle: "normal",
-              fontSize: { xs: "2rem", md: "3rem" },
+              fontSize: { xs: "1.5rem", sm: "2rem", md: "3rem" },
               lineHeight: "100%",
-              letterSpacing: "-0.5px",
+              letterSpacing: { xs: "normal", sm: "-0.5px" },
               "& span": { fontWeight: 600 },
+              "& br": {
+                display: { xs: "none", sm: "block" },
+              },
             }}
           >
             Evolving the drive with <span>360-degree</span>
@@ -223,7 +240,11 @@ const SectionTwo = () => {
           <Grid
             container
             spacing={2}
-            sx={{ width: "100%", justifyContent: "center" }}
+            sx={{
+              width: "100%",
+              justifyContent: "center",
+              flexDirection: { xs: "column", md: "row" },
+            }}
           >
             <Grid
               item
@@ -235,16 +256,61 @@ const SectionTwo = () => {
                 justifyContent: "center",
                 textAlign: "center",
                 alignItems: "center",
+                order: { xs: 2, md: 1 },
               }}
             >
               <Box
                 sx={{
-                  borderLeft: {
-                    xs: 0,
-                    lg: "2px solid rgba(255, 255, 255, 0.3)",
+                  position: "relative",
+                  display: "flex",
+                  flexDirection: { xs: "row", lg: "column" },
+                  gap: { xs: 2, lg: 0 },
+                  borderTop: {
+                    xs: "2px solid rgba(255, 255, 255, 0.3)",
+                    lg: "none",
+                  },
+                  borderBottom: {
+                    xs: "2px solid rgba(255, 255, 255, 0.3)",
+                    lg: "none",
+                  },
+                  width: { xs: "100%", lg: "auto" },
+                  py: { xs: 2, lg: 0 },
+                  justifyContent: { xs: "space-around", lg: "center" },
+                  "&::before": {
+                    content: '""',
+                    position: "absolute",
+                    left: 0,
+                    top: 0,
+                    bottom: 0,
+                    width: "2px",
+                    background: (theme) =>
+                      `linear-gradient(to bottom, 
+          ${
+            vehicle === "passenger"
+              ? "rgba(255, 255, 255, 1)"
+              : "rgba(255, 255, 255, 0.3)"
+          } 0%, 
+          ${
+            vehicle === "passenger"
+              ? "rgba(255, 255, 255, 1)"
+              : "rgba(255, 255, 255, 0.3)"
+          } 50%, 
+          ${
+            vehicle === "commercial"
+              ? "rgba(255, 255, 255, 1)"
+              : "rgba(255, 255, 255, 0.3)"
+          } 50%, 
+          ${
+            vehicle === "commercial"
+              ? "rgba(255, 255, 255, 1)"
+              : "rgba(255, 255, 255, 0.3)"
+          } 100%)`,
+                    display: { xs: "none", lg: "block" },
+                    transition: "background 0.4s ease",
                   },
                 }}
               >
+                {/* Rest of your button code remains the same */}
                 {["passenger", "commercial"].map((type) => (
                   <Button
                     key={type}
@@ -260,8 +326,8 @@ const SectionTwo = () => {
                     }}
                     sx={{
                       display: "block",
-                      mb: 6,
-                      ml: 2,
+                      mb: { xs: 0, lg: 6 },
+                      ml: { xs: 0, lg: 2 },
                       textTransform: "none",
                       opacity: vehicle === type ? 1 : 0.25,
                       color: "common.white",
@@ -274,7 +340,9 @@ const SectionTwo = () => {
                       fontWeight={600}
                       mb={1}
                       textAlign="center"
-                      sx={{ fontSize: "32px" }}
+                      sx={{
+                        fontSize: { xs: "1.25rem", sm: "1.5rem", md: "2rem" },
+                      }}
                     >
                       {type === "passenger"
                         ? "Passenger vehicles"
@@ -285,11 +353,14 @@ const SectionTwo = () => {
                       fontWeight={300}
                       textAlign="center"
                       whiteSpace="pre-line"
+                      sx={{
+                        fontSize: { xs: "0.75rem", sm: "0.875rem", md: "1rem" },
+                      }}
                     >
                       {type === "passenger"
                         ? "Revving up innovation\nfrom interior to exterior."
                         : "Advancing engineering\nfor heavy-duty vehicles."}
-                    </Typography>
+                    </Typography>{" "}
                   </Button>
                 ))}
               </Box>
@@ -300,7 +371,13 @@ const SectionTwo = () => {
               xs={12}
               md={6}
               lg={8}
-              sx={{ position: "relative", textAlign: "center", width: "100%" }}
+              sx={{
+                position: "relative",
+                textAlign: "center",
+                width: "100%",
+                height: { xs: "40vh", sm: "50vh", md: "60vh", lg: "100%" },
+                order: { xs: 1, md: 2 },
+              }}
             >
               <VideoContainer>
                 <motion.div
@@ -312,7 +389,7 @@ const SectionTwo = () => {
                     borderRadius: 12,
                     overflow: "hidden",
                     background: "#111",
-                    scale: Math.max(0.35, 1 - scrollPct * 0.8),
+                    scale: Math.max(isMobile ? 0.5 : 0.35, 1 - scrollPct * 0.8),
                     opacity: 1 - scrollPct,
                     y: -scrollPct * 20,
                     display: vehicle === "passenger" ? "inline-block" : "none",
@@ -347,10 +424,14 @@ const SectionTwo = () => {
                       position: "absolute",
                       left: "50%",
                       transform: "translateX(-50%)",
-                      top: `${Math.max(20, (1 - scrollPct) * 400 + 40)}px`,
+                      top: `${Math.max(
+                        isMobile ? 10 : 20,
+                        (1 - scrollPct) * (isMobile ? 200 : 400) +
+                          (isMobile ? 20 : 40)
+                      )}px`,
                       width: "100%",
-                      maxWidth: "480px",
-                      height: "270px",
+                      maxWidth: isMobile ? "90%" : "480px",
+                      height: isMobile ? "180px" : "270px",
                       background: "#1e1e1e",
                       color: "#fff",
                       zIndex: 5,
@@ -391,21 +472,38 @@ const SectionTwo = () => {
             container
             spacing={2}
             justifyContent="flex-end"
-            sx={{ pb: 4, width: "100%" }}
+            sx={{
+              pb: { xs: 2, sm: 4 },
+              width: "100%",
+              mt: { xs: 2, sm: 0 },
+            }}
           >
             <Grid
               item
               xs={10}
               md={10}
               lg={10}
-              sx={{ display: "flex", justifyContent: "flex-end", gap: "1rem" }}
+              sx={{
+                display: "flex",
+                justifyContent: { xs: "center", sm: "flex-end" },
+                gap: "1rem",
+                overflowX: "auto",
+                scrollbarWidth: "none",
+                "&::-webkit-scrollbar": {
+                  display: "none",
+                },
+              }}
             >
               {slides.map((s, i) => (
-                <Grid item key={s.title} sx={{ display: "flex" }}>
+                <Grid
+                  item
+                  key={s.title}
+                  sx={{ display: "flex", flexShrink: 0 }}
+                >
                   <PartButton
                     onClick={() => setPartIdx(i)}
                     sx={{
-                      minWidth: 60,
+                      minWidth: { xs: 50, sm: 60 },
                       flexDirection: "column",
                       textTransform: "none",
                       color: "white",
@@ -417,8 +515,8 @@ const SectionTwo = () => {
                       src={s.icon}
                       alt={s.title}
                       style={{
-                        width: 60,
-                        height: 60,
+                        width: isMobile ? 40 : 60,
+                        height: isMobile ? 40 : 60,
                         marginBottom: 4,
                         filter: partIdx === i ? "none" : "invert(0.3)",
                         opacity: partIdx === i ? 1 : 0.7,
@@ -430,6 +528,7 @@ const SectionTwo = () => {
                         color: partIdx === i ? "white" : "grey.500",
                         fontWeight: partIdx === i ? 600 : 400,
                         textAlign: "center",
+                        fontSize: { xs: "0.6rem", sm: "0.75rem" },
                       }}
                     >
                       {s.title}
@@ -453,8 +552,8 @@ const SectionTwo = () => {
                 onClick={togglePlayPause}
                 sx={{
                   position: "relative",
-                  width: 60,
-                  height: 60,
+                  width: { xs: 40, sm: 60 },
+                  height: { xs: 40, sm: 60 },
                   borderRadius: "50%",
                   padding: 0,
                   background: "transparent",
@@ -462,35 +561,60 @@ const SectionTwo = () => {
                   cursor: "pointer",
                 }}
               >
-                <svg width="60" height="60" viewBox="0 0 60 60">
+                <svg
+                  width={isMobile ? "40" : "60"}
+                  height={isMobile ? "40" : "60"}
+                  viewBox={`0 0 ${isMobile ? "40" : "60"} ${
+                    isMobile ? "40" : "60"
+                  }`}
+                >
                   <circle
-                    cx="30"
-                    cy="30"
-                    r="28"
+                    cx={isMobile ? "20" : "30"}
+                    cy={isMobile ? "20" : "30"}
+                    r={isMobile ? "18" : "28"}
                     stroke="white"
                     strokeWidth="2"
                     fill="none"
                     opacity="0.2"
                   />
                   <circle
-                    cx="30"
-                    cy="30"
-                    r="28"
+                    cx={isMobile ? "20" : "30"}
+                    cy={isMobile ? "20" : "30"}
+                    r={isMobile ? "18" : "28"}
                     stroke="white"
                     strokeWidth="2"
                     fill="none"
-                    strokeDasharray={2 * Math.PI * 28}
-                    strokeDashoffset={(1 - videoProgress) * 2 * Math.PI * 28}
-                    transform="rotate(-90 30 30)"
+                    strokeDasharray={2 * Math.PI * (isMobile ? 18 : 28)}
+                    strokeDashoffset={
+                      (1 - videoProgress) * 2 * Math.PI * (isMobile ? 18 : 28)
+                    }
+                    transform={`rotate(-90 ${isMobile ? "20 20" : "30 30"})`}
                     style={{ transition: "stroke-dashoffset 0.2s linear" }}
                   />
                   {isPlaying ? (
                     <g fill="white">
-                      <rect x="24" y="20" width="4" height="20" rx="1" />
-                      <rect x="32" y="20" width="4" height="20" rx="1" />
+                      <rect
+                        x={isMobile ? "16" : "24"}
+                        y={isMobile ? "12" : "20"}
+                        width={isMobile ? "2" : "4"}
+                        height={isMobile ? "16" : "20"}
+                        rx="1"
+                      />
+                      <rect
+                        x={isMobile ? "22" : "32"}
+                        y={isMobile ? "12" : "20"}
+                        width={isMobile ? "2" : "4"}
+                        height={isMobile ? "16" : "20"}
+                        rx="1"
+                      />
                     </g>
                   ) : (
-                    <polygon points="24,20 40,30 24,40" fill="white" />
+                    <polygon
+                      points={
+                        isMobile ? "16,12 28,20 16,28" : "24,20 40,30 24,40"
+                      }
+                      fill="white"
+                    />
                   )}
                 </svg>
               </Button>
